@@ -44,13 +44,11 @@ jobs:
           app-store-connect-api-key-issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           app-store-connect-api-key-base64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
 
-      - name: Upload to TestFlight via Official Apple Action
-        uses: apple-actions/upload-testflight-build@v1
-        with:
-          app-path: 'NeonRetroBowling.ipa'
-          issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          api-key-base64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+      - name: Upload to TestFlight via Apple altool
+        run: |
+          mkdir -p ~/.private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode > ~/.private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+          xcrun altool --upload-app --file NeonRetroBowling.ipa --type ios --apiKey ${{ secrets.APP_STORE_CONNECT_KEY_ID }} --apiIssuer ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
