@@ -1,0 +1,9 @@
+[NewRequest]
+Subject = "CN=NEXAPP Studio, O=NEXAPP, C=JO"
+KeyLength = 2048
+KeySpec = 1
+KeyUsage = 0x80
+Exportable = True
+MachineKeySet = False
+RequestType = PKCS10
+ProviderName = "Microsoft Enhanced Cryptographic Provider v1.0"

@@ -1,0 +1,16 @@
+{
+  "name": "Neon Retro Bowling",
+  "revisionLabel": "Center the mobile scoreboard layout",
+  "description": "Remixed from Rosebud AI Universal Project",
+  "mode": "Universal",
+  "exportDate": "2026-05-26T14:16:39.732Z",
+  "rosebudBuiltInSplash": {
+    "present": true,
+    "version": 1
+  },
+  "assetCount": 5,
+  "assetTypes": [
+    "image",
+    "audio"
+  ]
+}
