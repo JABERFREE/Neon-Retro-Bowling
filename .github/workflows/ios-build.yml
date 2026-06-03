@@ -1,7 +1,7 @@
 name: Build iOS IPA
 on:
   push:
-    branches: [ main ] # سيبدأ السيرفر بالعمل فوراً عند رفع الكود على فرع main
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -17,6 +17,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+
+      - name: Fix Capacitor Permissions
+        run: chmod +x ./node_modules/.bin/cap
 
       - name: Sync Capacitor iOS
         run: npx cap sync ios
