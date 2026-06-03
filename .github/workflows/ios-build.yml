@@ -18,6 +18,10 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Force Update Bundle Identifier in Xcode
+        run: |
+          sed -i '' 's/com.example.neonretro/com.nexapp.neonretrobowling/g' ios/App/App.xcodeproj/project.pbxproj
+
       - name: Fix Capacitor Permissions
         run: chmod +x ./node_modules/.bin/cap
 
