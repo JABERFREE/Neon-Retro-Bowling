@@ -28,7 +28,7 @@ jobs:
       - name: Sync Capacitor iOS
         run: npx cap sync ios
 
-      - name: Building and Uploading iOS IPA
+      - name: Building iOS IPA
         uses: yukiarrr/ios-build-action@v1.11.0
         with:
           project-path: ios/App/App.xcodeproj
@@ -43,6 +43,12 @@ jobs:
           app-store-connect-api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           app-store-connect-api-key-issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           app-store-connect-api-key-base64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+
+      - name: Upload to Testflight via Apple Transporter
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+          xcrun iTMSTransporter -m upload -assetPckg NeonRetroBowling.ipa -apiKey ${{ secrets.APP_STORE_CONNECT_KEY_ID }} -apiIssuer ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
