@@ -28,12 +28,11 @@ jobs:
         uses: yukiarrr/ios-build-action@v1.11.0
         with:
           project-path: ios/App/App.xcodeproj
-          workspace-path: ios/App/App.xcworkspace
           p12-base64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
           mobileprovision-base64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
           code-signing-identity: "Apple Distribution"
           team-id: "LH6K854ZP6"
-          workspace-scheme: "App"
+          scheme: "App"
           certificate-password: ${{ secrets.IOS_CERTIFICATE_PASS }}
           export-method: "app-store"
           output-path: "NeonRetroBowling.ipa"
