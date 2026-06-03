@@ -28,7 +28,7 @@ jobs:
       - name: Sync Capacitor iOS
         run: npx cap sync ios
 
-      - name: Building iOS IPA
+      - name: Building and Uploading iOS IPA
         uses: yukiarrr/ios-build-action@v1.11.0
         with:
           project-path: ios/App/App.xcodeproj
@@ -40,6 +40,9 @@ jobs:
           certificate-password: ${{ secrets.IOS_CERTIFICATE_PASS }}
           export-method: "app-store"
           output-path: "NeonRetroBowling.ipa"
+          app-store-connect-api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          app-store-connect-api-key-issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          app-store-connect-api-key-base64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
