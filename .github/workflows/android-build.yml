@@ -26,10 +26,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Sync Capacitor Android
+      - name: Fix Permissions and Sync Android
         run: |
-          npx @capacitor/cli add android || true
-          npx @capacitor/cli sync android
+          chmod +x node_modules/.bin/cap || true
+          node node_modules/@capacitor/cli/bin/capacitor add android || true
+          node node_modules/@capacitor/cli/bin/capacitor sync android
 
       - name: Build Android APK (Debug)
         run: |
