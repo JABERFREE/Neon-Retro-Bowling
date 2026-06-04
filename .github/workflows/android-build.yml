@@ -2,7 +2,7 @@ name: Android Build (NexApp)
 
 on:
   push:
-    branches: [ main, master ] # سيبدأ البناء تلقائياً بمجرد رفع الكود على فرعك الرئيسي
+    branches: [ main, master ]
 
 jobs:
   build:
@@ -28,8 +28,8 @@ jobs:
 
       - name: Sync Capacitor Android
         run: |
-          npx cap add android || true
-          npx cap sync android
+          npx @capacitor/cli add android || true
+          npx @capacitor/cli sync android
 
       - name: Build Android APK (Debug)
         run: |
