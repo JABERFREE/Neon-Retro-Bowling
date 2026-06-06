@@ -60,13 +60,14 @@ class BowlingGame {
         this.cgSDK = null;
         this.isAdPlaying = false;
         this.savedMuteStateBeforeAd = false;
-        if (window.CrazyGames && window.CrazyGames.SDK && window.CrazyGames.SDK.environment !== 'disabled') {
-            this.cgSDK = window.CrazyGames.SDK;
-            console.log('CrazyGames SDK successfully loaded and active.');
-        } else {
-            this.cgSDK = null;
-            console.log('CrazyGames SDK disabled or in sandbox domain. SDK calls bypassed safely.');
-        }
+        // // CrazyGames HTML5 SDK integration & fail-safe states (تعطيل مؤقت لأجل منصة بوكي)
+// if (window.CrazyGames && window.CrazyGames.SDK && window.CrazyGames.SDK.environment !== 'disabled') {
+//     this.cgSDK = window.CrazyGames.SDK;
+//     console.log('CrazyGames SDK successfully loaded and active.');
+// } else {
+    this.cgSDK = null;
+    console.log('CrazyGames SDK bypassed safely for Poki build.');
+// }
 
         this.initThree();
         this.buildLane();
