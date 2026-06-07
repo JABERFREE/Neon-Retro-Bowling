@@ -15,12 +15,14 @@ export class AudioManager {
         this.musicNode = null;
         this.musicGainNode = null;
 
-        this.soundPaths = {
-            music: 'assets/audio/bgm-synthwave.mp3',
-            roll: 'assets/audio/sfx-ball-roll.mp3',
-            clatter: 'assets/audio/sfx-pin-clatter.mp3',
-            strike: 'assets/audio/sfx-strike.mp3'
-        };
+       this.soundPaths = {
+      music: 'assets/audio/bgm-synthwave.mp3',
+      roll: 'assets/audio/sfx-ball-roll.mp3',
+      clatter: 'assets/audio/sfx-pin-clatter.mp3',
+      strike: 'assets/audio/sfx-strike.mp3',
+      miss: 'assets/audio/sfx-miss.mp3'
+    };
+        
 
         this.loaded = false;
     }
@@ -218,6 +220,17 @@ export class AudioManager {
 
         source.start(0);
     }
+    playMissSound() {
+    if (!this.loaded || this.isMuted || !this.buffers.miss) return;
+    this.resumeContext();
+    const source = this.ctx.createBufferSource();
+    source.buffer = this.buffers.miss;
+    const gainNode = this.ctx.createGain();
+    gainNode.gain.value = this.masterVolume * 0.8;
+    source.connect(gainNode);
+    gainNode.connect(this.ctx.destination);
+    source.start(0);
+  }
 
     playClick() {
         // Procedural high-pass laser beep for clicks to ensure instantly available

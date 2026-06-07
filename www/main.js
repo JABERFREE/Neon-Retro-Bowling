@@ -825,7 +825,10 @@ class BowlingGame {
 
         let resultType = 'normal';
         let feedbackText = `${countKnockedThisThrow} PINS`;
-
+if (countKnockedThisThrow === 0) {
+            this.audio.playMissSound();
+            feedbackText = 'MISS!'; 
+        }
         if (this.currentThrow === 1 && totalFallenCount === 10) {
             // STRIKE!
             currentFrameScore.isStrike = true;

@@ -39,7 +39,7 @@ div[class*="control"], div[id*="control"], .ui-bottom, #ui-root {
     </style>
  
   <style>
-    #rosebud-exported-splash {
+    #retro-exported-splash {
     position: fixed;
     inset: 0;
     z-index: 2147483647;
@@ -51,11 +51,11 @@ div[class*="control"], div[id*="control"], .ui-bottom, #ui-root {
     transition: opacity 500ms ease-in-out;
 }
 
-    #rosebud-exported-splash.is-hiding {
+    #retro-exported-splash.is-hiding {
         opacity: 0;
     }
 
-    #rosebud-exported-splash .rosebud-exported-splash__content {
+    #retro-exported-splash .retro-exported-splash__content {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -65,13 +65,13 @@ div[class*="control"], div[id*="control"], .ui-bottom, #ui-root {
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
-    #rosebud-exported-splash .rosebud-exported-splash__logo {
+    #retro-exported-splash .retro-exported-splash__logo {
         width: 100px;
         height: 100px;
-        animation: rosebud-exported-splash-breathe 2.4s ease-in-out infinite;
+        animation: retro-exported-splash-breathe 2.4s ease-in-out infinite;
     }
 
-    #rosebud-exported-splash .rosebud-exported-splash__text {
+    #retro-exported-splash .retro-exported-splash__text {
         display: flex;
         flex-direction: column;
         gap: 4px;
@@ -80,15 +80,15 @@ div[class*="control"], div[id*="control"], .ui-bottom, #ui-root {
         letter-spacing: 0.06em;
     }
 
-    #rosebud-exported-splash .rosebud-exported-splash__text strong {
+    #retro-exported-splash .retro-exported-splash__text strong {
         font-weight: 700;
     }
 
-    #rosebud-exported-splash .rosebud-exported-splash__text span:last-child {
+    #retro-exported-splash .retro-exported-splash__text span:last-child {
         opacity: 0.88;
     }
 
-    @keyframes rosebud-exported-splash-breathe {
+    @keyframes retro-exported-splash-breathe {
         0%,
         100% {
             transform: scale(1);
@@ -99,31 +99,31 @@ div[class*="control"], div[id*="control"], .ui-bottom, #ui-root {
     }
 </style></head>
   <body>
-<div id="rosebud-exported-splash" aria-live="polite">
-    <div class="rosebud-exported-splash__content">
+<div id="retro-exported-splash" aria-live="polite">
+    <div class="retro-exported-splash__content">
         <img
-            class="rosebud-exported-splash__logo"
-            src="__rosebud/rosebud-icon.png"
-            alt="Rosebud Logo"
+            class="retro-exported-splash__logo"
+            src="__retro/retro-icon.png"
+            alt="retro Logo"
             width="100"
             height="100"
         />
-        <div class="rosebud-exported-splash__text" aria-label="Rosebud.AI Make Games">
-            <strong>Rosebud.AI</strong>
+        <div class="retro-exported-splash__text" aria-label="retro.AI Make Games">
+            <strong>retro.AI</strong>
             <span>Make Games</span>
         </div>
     </div>
 </div>
     <div id="game-container"></div>
     <script type="module" src="main.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/ChatManager.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/ImageGenerator.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/ProgressLogger.js"></script>
-    <script src="https://storage.googleapis.com/rosebud_staticfiles/OGP.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/ChatManager.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/ImageGenerator.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/ProgressLogger.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/OGP.js"></script>
   
 <script>
     (() => {
-        const splashRoot = document.getElementById('rosebud-exported-splash');
+        const splashRoot = document.getElementById('retro-exported-splash');
         if (!splashRoot) return;
 
         let isReady = false;
