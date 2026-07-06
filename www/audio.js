@@ -8,6 +8,8 @@ export class AudioManager {
         this.sources = {};
         this.isMuted = false;
         this.masterVolume = 0.6;
+        this.musicVolume = 0.4; // الحجم الافتراضي لموسيقى الخلفية
+        this.sfxVolume = 0.7;   // الحجم الافتراضي لضربات وصوت الكرة
         
         // Active looping sounds
         this.rollSoundNode = null;
@@ -26,7 +28,35 @@ export class AudioManager {
 
         this.loaded = false;
     }
+/**
+     * التحكم في مستوى تيار موسيقى الخلفية فقط ديناميكياً 🎵
+     */
+    setMusicVolume(volume) {
+        this.musicVolume = volume;
+        
+        // تحديث عُقدة الصوت الخاصة بالموسيقى فوراً إذا كانت تعمل في الخلفية
+        if (this.musicGainNode && this.ctx) {
+            this.musicGainNode.gain.setValueAtTime(
+                this.isMuted ? 0 : this.musicVolume, 
+                this.ctx.currentTime
+            );
+        }
+    }
 
+    /**
+     * التحكم في قوة صوت اصطدام الكرة، تدحرجها وسقوط الدبابيس ⚡
+     */
+    setSfxVolume(volume) {
+        this.sfxVolume = volume;
+        
+        // 1. تحديث صوت حركة دحرجة الكرة المستمر
+        if (this.rollGainNode && this.ctx) {
+            this.rollGainNode.gain.setValueAtTime(this.sfxVolume, this.ctx.currentTime);
+        }
+        
+        // 2. تحديث متغير الصوت العام للمؤثرات لتقرأه دالات الارتطام فوراً
+        this.masterVolume = volume; 
+    }
     async init() {
         if (this.ctx) return;
         

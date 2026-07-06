@@ -21,7 +21,15 @@ window.addEventListener('error', (event) => {
         console.log('CrazyGames SDK sandbox error bypassed safely.');
     }
 });
-
+// 🎨 مصفوفة الألوان النيونية المخصصة لكل مرحلة لكسر الملل البصري
+const LEVEL_BALL_CONFIG = [
+  { ballColor: '#00ffff', spaceBg: '#0000FF', glowColor: 0x00ffff, metalness: 0.8,  emissiveIntensity: 1.6 }, // المستوى 1: أزرق نيوني
+  { ballColor: '#ffaa00', spaceBg: '#0000FF', glowColor: 0xffbb00, metalness: 0.95, emissiveIntensity: 2.2 }, // المستوى 2: أصفر ذهبي ناري
+   // ج
+{ ballColor: '0xff007f', spaceBg: '0x050515', glowColor: '0xff0055', metalness: 0.8, emissiveIntensity: 1.6 },
+{ ballColor: '0x00ff66', spaceBg: '0x020a10', glowColor: '0x00cc44', metalness: 0.9, emissiveIntensity: 2.2 },
+{ ballColor: '0x7e57c2', spaceBg: '0x100215', glowColor: '0x5e35b1', metalness: 0.8, emissiveIntensity: 1.8 }
+];
 class BowlingGame {
     constructor() {
         this.container = document.getElementById('game-container');
@@ -139,17 +147,18 @@ class BowlingGame {
         const canvas = document.createElement('canvas');
         canvas.width = 512;
         canvas.height = 1024;
-        const ctx = canvas.getContext('2d');
-        
-        // Classic wood grain gradient base
-        const grad = ctx.createLinearGradient(0, 0, 512, 0);
-        grad.addColorStop(0, '#1c0e07'); // dark edges
-        grad.addColorStop(0.3, '#30180c');
-        grad.addColorStop(0.5, '#422110'); // glowing wood board color
-        grad.addColorStop(0.7, '#30180c');
-        grad.addColorStop(1, '#1c0e07');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 512, 1024);
+        // في دالة buildLane()
+// استبدل السطر 152 بهذا الكود:
+const ctx = canvas.getContext('2d');
+// تغيير التدرج ليكون بنفسجياً متناغماً
+const grad = ctx.createLinearGradient(0, 0, 512, 0);
+grad.addColorStop(0, '#2a004e');   // بنفسجي غامق جداً عند الحواف
+grad.addColorStop(0.3, '#4b0082'); // بنفسجي متوسط (Indigo)
+grad.addColorStop(0.5, '#9400d3'); // بنفسجي فاتح ومتوهج في المنتصف (DarkViolet)
+grad.addColorStop(0.7, '#4b0082');
+grad.addColorStop(1, '#2a004e');
+ctx.fillStyle = grad;
+ctx.fillRect(0, 0, 512, 1024);
 
         // Add wood plank stripes
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
@@ -218,12 +227,14 @@ class BowlingGame {
         const gutterWidth = 0.22;
         const gutterDepth = 0.08;
         const gutterGeom = new THREE.BoxGeometry(gutterWidth, gutterDepth, laneLength);
-        const gutterMat = new THREE.MeshStandardMaterial({
-            color: 0x050010,
-            roughness: 0.4,
-            metalness: 0.8
-        });
-
+       // في دالة buildLane()
+const gutterMat = new THREE.MeshStandardMaterial({
+    color: 0x1a0033,    // بنفسجي داكن جداً للحواف
+    roughness: 0.2,
+    metalness: 0.8,
+    emissive: 0x000000, // إزالة التوهج من الحواف لتبقى داكنة وتبرز الممر
+    emissiveIntensity: 0
+});
         // Left Gutter
         const leftGutter = new THREE.Mesh(gutterGeom, gutterMat);
         leftGutter.position.set(-(laneWidth / 2 + gutterWidth / 2), -gutterDepth / 2, -7);
@@ -255,9 +266,13 @@ class BowlingGame {
         this.scene.add(floorMesh);
 
         // --- 3. SYNTHWAVE HORIZON BACKDROP ---
-        const bgTexture = new THREE.TextureLoader().load('assets/retro-bg.webp');
+        // غيّر السطر 269 ليصبح هكذا:
+// استخدم هذا السطر بدقة
+const bgTexture = new THREE.TextureLoader().load('assets/retro-bg.webp?v=' + Date.now());
         bgTexture.colorSpace = THREE.SRGBColorSpace;
-        const bgGeom = new THREE.PlaneGeometry(36, 20);
+        // استبدل السطر الذي يحتوي على bgGeom بـ:
+// استخدام قياسات تجعل الخلفية تغطي المشهد بعرض أكبر
+const bgGeom = new THREE.PlaneGeometry(60, 25);
         const bgMat = new THREE.MeshBasicMaterial({
             map: bgTexture,
             side: THREE.DoubleSide
@@ -361,34 +376,34 @@ class BowlingGame {
         this.spawnBall();
         this.controls.ballMesh = this.ballMesh;
     }
-
-    buildPinMeshes() {
-        // Clean existing
+buildPinMeshes() {
+        // تنظيف الدبابيس القديمة من المشهد بسلام
         this.pinMeshes.forEach(mesh => this.scene.remove(mesh));
         this.pinMeshes = [];
         this.pinStripeMaterials = [];
 
-        // Pin material: shiny pearlescent white
+        // 🌟 صقل خامة جسم الدبوس: طبقة بلاستيكية زجاجية فاخرة تعكس خطوط النيون المحيطة (Glossy Finish)
         const bodyMat = new THREE.MeshStandardMaterial({
-            color: 0xeeeeee,
-            roughness: 0.1,
-            metalness: 0.2,
+            color: 0xffffff,              // لون الدبوس الأبيض الناصع الحقيقي
+            roughness: 0.03,              // صقل فائق النعومة ليعطي لمعاناً كالمرايا
+            metalness: 0.05,              // انعكاس داخلي خفيف لعمق الخامة
+            clearcoat: 1.0,               // تفعيل طبقة الورنيش الشفافة الفاخرة بنسبة 100%
+            clearcoatRoughness: 0.01,     // جعل طبقة الحماية الخارجية ناعمة مية بالمية لعكس الضوء بنقاء
             bumpScale: 0.05
         });
 
-        // Shared static geoms
+        // الأشكال الهندسية الثابتة للأجزاء
         const baseGeom = new THREE.CylinderGeometry(0.045, 0.06, 0.22, 16);
         const neckGeom = new THREE.CylinderGeometry(0.02, 0.038, 0.1, 16);
         const headGeom = new THREE.SphereGeometry(0.026, 16, 16);
 
-        // Instantiate meshes according to physics pin positions
+        // توزيع الدبابيس بناءً على نظام الفيزياء
         this.physics.pins.forEach((pin, index) => {
-            // Create a unique standard material with emissive properties for this pin's neon stripes.
-            // This allows us to flash each pin independently when hit!
+            // 🚨 خامة الخطوط الحمراء الشهيرة بنبض نيون فخم يتفاعل ويومض بقوة عند ضرب الكرة
             const stripeMat = new THREE.MeshStandardMaterial({
-                color: 0xff00ff,
-                emissive: 0xff00ff,
-                emissiveIntensity: 1.0,
+                color: 0xff0033,           // أحمر البولينج الأصلي الاحترافي
+                emissive: 0xff0033,        // جعل الخط يشع بوهج نيون أحمر
+                emissiveIntensity: 1.2,    // شدة إضاءة متوازنة ومبهرة
                 roughness: 0.1,
                 metalness: 0.2
             });
@@ -396,7 +411,7 @@ class BowlingGame {
 
             const pinGroup = new THREE.Group();
 
-            // Assemble the pin parts elastically
+            // تجميع أجزاء الدبوس المصقول
             const baseMesh = new THREE.Mesh(baseGeom, bodyMat);
             baseMesh.position.y = 0.11;
             baseMesh.castShadow = true;
@@ -414,6 +429,7 @@ class BowlingGame {
             headMesh.castShadow = true;
             pinGroup.add(headMesh);
 
+            // أشرطة الدبوس الحمراء المضيئة
             const stripe1 = new THREE.Mesh(new THREE.CylinderGeometry(0.027, 0.027, 0.015, 16), stripeMat);
             stripe1.position.y = 0.27;
             pinGroup.add(stripe1);
@@ -426,9 +442,7 @@ class BowlingGame {
             this.scene.add(pinGroup);
             this.pinMeshes.push(pinGroup);
         });
-    }
-
-    spawnBall() {
+    }spawnBall() {
         if (this.ballMesh) {
             this.scene.add(this.ballMesh);
             this.ballMesh.position.set(0, this.physics.ballRadius, this.foulLineZ);
@@ -436,23 +450,20 @@ class BowlingGame {
             return;
         }
 
-        // Generate gorgeous round 3D retro ball with glowing blue or gold grid texture
         const geom = new THREE.SphereGeometry(this.physics.ballRadius, 32, 32);
+        const configIndex = Math.min(this.currentLevel - 1, LEVEL_BALL_CONFIG.length - 1);
+        const currentConfig = LEVEL_BALL_CONFIG[configIndex];
 
-        // Canvas grid drawing
         const bCanvas = document.createElement('canvas');
         bCanvas.width = 256;
         bCanvas.height = 128;
         const bctx = bCanvas.getContext('2d');
-        const isGolden = this.currentLevel >= 2;
 
-        bctx.fillStyle = isGolden ? '#150f01' : '#03011c'; // space deep gold vs space deep blue
+        bctx.fillStyle = currentConfig.spaceBg;
         bctx.fillRect(0, 0, 256, 128);
-        
-        bctx.strokeStyle = isGolden ? '#ffaa00' : '#00ffff'; // Gold neon vs Cyan neon lines
+        bctx.strokeStyle = currentConfig.ballColor;
         bctx.lineWidth = 2.5;
 
-        // Draw horizontal grid lines
         const gridH = 12;
         for (let i = 0; i <= gridH; i++) {
             const y = (i / gridH) * 128;
@@ -462,13 +473,12 @@ class BowlingGame {
             bctx.stroke();
         }
 
-        // Draw vertical grid lines
         const gridV = 24;
         for (let i = 0; i <= gridV; i++) {
             const x = (i / gridV) * 256;
             bctx.beginPath();
             bctx.moveTo(x, 0);
-            bctx.lineTo(x, 128);
+            bctx.lineTo(256, x); 
             bctx.stroke();
         }
 
@@ -478,10 +488,10 @@ class BowlingGame {
         const ballMat = new THREE.MeshStandardMaterial({
             map: ballTexture,
             roughness: 0.05,
-            metalness: isGolden ? 0.95 : 0.8, // higher metal shine for gold
-            emissive: isGolden ? 0xffbb00 : 0x00ffff,
+            metalness: currentConfig.metalness,
+            emissive: currentConfig.glowColor,
             emissiveMap: ballTexture,
-            emissiveIntensity: isGolden ? 2.2 : 1.6 // high power glow!
+            emissiveIntensity: currentConfig.emissiveIntensity
         });
 
         this.ballMesh = new THREE.Mesh(geom, ballMat);
@@ -583,11 +593,20 @@ class BowlingGame {
         if (this.gameState === 'ROLLING' || this.gameState === 'PINS_SETTLING') {
             // Level 3+ moving pins incentive: let standing pins slide back & forth horizontally
             if (this.currentLevel >= 3) {
-                const time = performance.now() * 0.0025;
+                // حساب الفارق بين المستوى الحالي والمستوى الثالث (0 في مستوى 3، 1 في مستوى 4...)
+                const levelOffset = this.currentLevel - 3; 
+                
+                // 🏎️ سرعة التأرجح: تزداد تدريجياً مع كل مستوى متقدم لرفع التحدي
+                const dynamicSpeed = 0.0025 + (levelOffset * 0.001);
+                const time = performance.now() * dynamicSpeed;
+                
+                // 📐 مدى الحركة (المسافة يميناً ويساراً): تتسع خطوة بخطوة لجعل الأطراف أصعب في الاصطياد
+                const maxSwayRange = 0.15 + (levelOffset * 0.04);
+
                 this.physics.pins.forEach(pin => {
                     if (pin.state === 'standing') {
-                        // Slow, fluid horizontal sway based on index phase shift
-                        const offset = Math.sin(time + pin.id * 1.5) * 0.15;
+                        // حيلة موجية: ضرب الآي دي يجعل كل دبوس يتحرك بتوقيت مختلف (Phase Shift) ليعطي مظهر نيون انسيابي
+                        const offset = Math.sin(time + pin.id * 1.5) * maxSwayRange;
                         pin.position.x = pin.initialPosition.x + offset;
                     }
                 });
@@ -1347,42 +1366,60 @@ if (countKnockedThisThrow === 0) {
             padding: 3px 8px;
             border-radius: 4px;
         `;
+// 📐 تحديث ستايل الصندوق ليدعم الترتيب العمودي لقنوات الصوت المنفصلة
+    soundBox.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        background: rgba(10, 0, 30, 0.85);
+        border: 1px solid #00ffff;
+        box-shadow: 0 0 8px #00ffff;
+        padding: 6px 12px;
+        border-radius: 6px;
+        pointer-events: auto;
+    `;
 
-        const muteBtn = document.createElement('button');
-        muteBtn.innerText = '🔊 MUTE';
-        muteBtn.style.cssText = `
-            background: transparent;
-            border: none;
-            color: #00ffff;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 9px;
-            cursor: pointer;
-            outline: none;
-            text-shadow: 0 0 3px #00ffff;
-        `;
-        muteBtn.addEventListener('click', () => {
-            this.audio.playClick();
-            const currentMute = this.audio.isMuted;
-            this.audio.setMute(!currentMute);
-            muteBtn.innerText = !currentMute ? '🔇 UNMUTE' : '🔊 MUTE';
-        });
-        soundBox.appendChild(muteBtn);
+    // --- 🎵 قناة الموسيقى (MUSIC CHANNEL) ---
+    const musicRow = document.createElement('div');
+    musicRow.style.cssText = `display: flex; align-items: center; gap: 8px; justify-content: space-between; width: 110px;`;
 
-        const volSlider = document.createElement('input');
-        volSlider.type = 'range';
-        volSlider.min = '0';
-        volSlider.max = '1';
-        volSlider.step = '0.05';
-        volSlider.value = '0.6';
-        volSlider.style.cssText = `
-            width: 60px;
-            accent-color: #ff00ff;
-            cursor: pointer;
-        `;
-        volSlider.addEventListener('input', (e) => {
-            this.audio.setVolume(parseFloat(e.target.value));
-        });
-        soundBox.appendChild(volSlider);
+    const musicLabel = document.createElement('span');
+    musicLabel.innerText = '🎵 BGM:';
+    musicLabel.style.cssText = `color: #00ffff; font-family: 'Orbitron', sans-serif; font-size: 9px; text-shadow: 0 0 3px #00ffff;`;
+    musicRow.appendChild(musicLabel);
+
+    const musicSlider = document.createElement('input');
+    musicSlider.type = 'range';
+    musicSlider.min = '0'; musicSlider.max = '1'; musicSlider.step = '0.05'; musicSlider.value = '0.4';
+    musicSlider.style.cssText = `width: 55px; accent-color: #00ffff; cursor: pointer;`;
+    musicSlider.addEventListener('input', (e) => {
+        if (this.audio && typeof this.audio.setMusicVolume === 'function') {
+            this.audio.setMusicVolume(parseFloat(e.target.value));
+        }
+    });
+    musicRow.appendChild(musicSlider);
+    soundBox.appendChild(musicRow);
+
+    // --- ⚡ قناة ضربات وصدمات الكرة ودحرجة النيون (SFX CHANNEL) ---
+    const sfxRow = document.createElement('div');
+    sfxRow.style.cssText = `display: flex; align-items: center; gap: 8px; justify-content: space-between; width: 110px; border-top: 1px solid rgba(0,255,255,0.15); padding-top: 4px;`;
+
+    const sfxLabel = document.createElement('span');
+    sfxLabel.innerText = '⚡ SFX:';
+    sfxLabel.style.cssText = `color: #ff00ff; font-family: 'Orbitron', sans-serif; font-size: 9px; text-shadow: 0 0 3px #ff00ff;`;
+    sfxRow.appendChild(sfxLabel);
+
+    const sfxSlider = document.createElement('input');
+    sfxSlider.type = 'range';
+    sfxSlider.min = '0'; sfxSlider.max = '1'; sfxSlider.step = '0.05'; sfxSlider.value = '0.7';
+    sfxSlider.style.cssText = `width: 55px; accent-color: #ff00ff; cursor: pointer;`;
+    sfxSlider.addEventListener('input', (e) => {
+        if (this.audio && typeof this.audio.setSfxVolume === 'function') {
+            this.audio.setSfxVolume(parseFloat(e.target.value));
+        }
+    });
+    sfxRow.appendChild(sfxSlider);
+    soundBox.appendChild(sfxRow);
 
         topHeader.appendChild(soundBox);
         uiContainer.appendChild(topHeader);
