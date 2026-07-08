@@ -7,12 +7,12 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
+          # نستخدم npm install بدلاً من ci لتجنب مشاكل قفل الإصدارات في بيئة البناء
           npm install
           npx cap sync ios
       - name: Build iOS app
         script: |
           cd ios/App
-          # لا نحتاج لـ pod install هنا لأن مشروعك يستخدم Swift Package Manager
           xcodebuild build -scheme App -destination 'generic/platform=iOS' -allowProvisioningUpdates
     artifacts:
       - ios/App/build/Build/Products/Debug-iphoneos/*.ipa
