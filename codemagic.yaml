@@ -8,13 +8,11 @@ workflows:
       - name: Install dependencies
         script: |
           npm install
+          npx cap sync ios
       - name: Build iOS app
         script: |
-          npx cap sync ios
           cd ios/App
-          rm -rf Pods
-          rm -rf Podfile.lock
-          pod install --repo-update
-          xcodebuild build -workspace App.xcworkspace -scheme App -destination 'generic/platform=iOS'
+          # لا نحتاج لـ pod install هنا لأن مشروعك يستخدم Swift Package Manager
+          xcodebuild build -scheme App -destination 'generic/platform=iOS' -allowProvisioningUpdates
     artifacts:
       - ios/App/build/Build/Products/Debug-iphoneos/*.ipa
