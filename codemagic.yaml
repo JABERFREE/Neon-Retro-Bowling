@@ -1,1 +1,19 @@
 
+workflows:
+  ios-workflow:
+    name: iOS Workflow
+    instance_type: mac_mini_m1
+    environment:
+      xcode: latest
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm ci
+      - name: Build iOS app
+        script: |
+          npx cap sync ios
+          cd ios/App
+          pod install
+          xcodebuild build -workspace App.xcworkspace -scheme App -destination 'generic/platform=iOS'
+    artifacts:
+      - ios/App/build/Build/Products/Debug-iphoneos/*.ipa
