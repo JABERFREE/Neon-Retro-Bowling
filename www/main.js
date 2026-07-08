@@ -21,14 +21,17 @@ window.addEventListener('error', (event) => {
         console.log('CrazyGames SDK sandbox error bypassed safely.');
     }
 });
-// 🎨 مصفوفة الألوان النيونية المخصصة لكل مرحلة لكسر الملل البصري
 const LEVEL_BALL_CONFIG = [
-  { ballColor: '#00ffff', spaceBg: '#0000FF', glowColor: 0x00ffff, metalness: 0.8,  emissiveIntensity: 1.6 }, // المستوى 1: أزرق نيوني
-  { ballColor: '#ffaa00', spaceBg: '#0000FF', glowColor: 0xffbb00, metalness: 0.95, emissiveIntensity: 2.2 }, // المستوى 2: أصفر ذهبي ناري
-   // ج
-{ ballColor: '0xff007f', spaceBg: '0x050515', glowColor: '0xff0055', metalness: 0.8, emissiveIntensity: 1.6 },
-{ ballColor: '0x00ff66', spaceBg: '0x020a10', glowColor: '0x00cc44', metalness: 0.9, emissiveIntensity: 2.2 },
-{ ballColor: '0x7e57c2', spaceBg: '0x100215', glowColor: '0x5e35b1', metalness: 0.8, emissiveIntensity: 1.8 }
+    { ballColor: 0x00ffff, metalness: 0.8, emissiveIntensity: 1.6 }, // سماوي
+    { ballColor: 0xffaa00, metalness: 0.95, emissiveIntensity: 2.2 }, // برتقالي ناري
+    { ballColor: 0xff007f, metalness: 0.8, emissiveIntensity: 1.6 }, // فوشيا
+    { ballColor: 0x00ff66, metalness: 0.9, emissiveIntensity: 2.2 }, // أخضر ليموني
+    { ballColor: 0x7e57c2, metalness: 0.8, emissiveIntensity: 1.8 }, // بنفسجي
+    { ballColor: 0xff0000, metalness: 0.9, emissiveIntensity: 2.0 }, // أحمر
+    { ballColor: 0xffff00, metalness: 0.8, emissiveIntensity: 1.9 }, // أصفر
+    { ballColor: 0x00bfff, metalness: 0.85, emissiveIntensity: 2.0 }, // أزرق سماوي
+    { ballColor: 0xff6600, metalness: 0.8, emissiveIntensity: 2.1 }, // برتقالي
+    { ballColor: 0xffffff, metalness: 1.0, emissiveIntensity: 2.5 }  // أبيض
 ];
 class BowlingGame {
     constructor() {
@@ -442,65 +445,55 @@ buildPinMeshes() {
             this.scene.add(pinGroup);
             this.pinMeshes.push(pinGroup);
         });
-    }spawnBall() {
-        if (this.ballMesh) {
-            this.scene.add(this.ballMesh);
-            this.ballMesh.position.set(0, this.physics.ballRadius, this.foulLineZ);
-            if (this.controls) this.controls.ballMesh = this.ballMesh;
-            return;
-        }
+    }
+spawnBall() {
+    // 1. تحديد الإعدادات
+    const index = Math.min(this.currentLevel - 1, LEVEL_BALL_CONFIG.length - 1);
+    const config = LEVEL_BALL_CONFIG[index];
 
+    // 2. إنشاء خريطة الخطوط الشبكية (النيون المخطط)
+    const bCanvas = document.createElement('canvas');
+    bCanvas.width = 512; bCanvas.height = 256;
+    const bctx = bCanvas.getContext('2d');
+    bctx.fillStyle = '#000000'; 
+    bctx.fillRect(0, 0, 512, 256);
+    
+    // رسم الخطوط (التخطيط النيوني)
+    bctx.strokeStyle = '#ffffff'; // الخطوط بيضاء لتكون واضحة
+    bctx.lineWidth = 4;
+    for (let i = 0; i <= 8; i++) { let y = (i / 8) * 256; bctx.beginPath(); bctx.moveTo(0, y); bctx.lineTo(512, y); bctx.stroke(); }
+    for (let i = 0; i <= 16; i++) { let x = (i / 16) * 512; bctx.beginPath(); bctx.moveTo(x, 0); bctx.lineTo(x, 256); bctx.stroke(); }
+
+    const ballTexture = new THREE.CanvasTexture(bCanvas);
+    ballTexture.needsUpdate = true;
+
+    // 3. تحديث المادة (Material)
+    if (this.ballMesh) {
+        // تحديث الكرة الموجودة بالفعل
+        this.ballMesh.material.map = ballTexture;
+        this.ballMesh.material.color.set(config.ballColor);
+        this.ballMesh.material.emissive.set(config.ballColor);
+        this.ballMesh.material.emissiveMap = ballTexture;
+        this.ballMesh.material.needsUpdate = true;
+        this.scene.add(this.ballMesh);
+        this.ballMesh.position.set(0, this.physics.ballRadius, this.foulLineZ);
+    } else {
+        // إنشاء كرة جديدة
         const geom = new THREE.SphereGeometry(this.physics.ballRadius, 32, 32);
-        const configIndex = Math.min(this.currentLevel - 1, LEVEL_BALL_CONFIG.length - 1);
-        const currentConfig = LEVEL_BALL_CONFIG[configIndex];
-
-        const bCanvas = document.createElement('canvas');
-        bCanvas.width = 256;
-        bCanvas.height = 128;
-        const bctx = bCanvas.getContext('2d');
-
-        bctx.fillStyle = currentConfig.spaceBg;
-        bctx.fillRect(0, 0, 256, 128);
-        bctx.strokeStyle = currentConfig.ballColor;
-        bctx.lineWidth = 2.5;
-
-        const gridH = 12;
-        for (let i = 0; i <= gridH; i++) {
-            const y = (i / gridH) * 128;
-            bctx.beginPath();
-            bctx.moveTo(0, y);
-            bctx.lineTo(256, y);
-            bctx.stroke();
-        }
-
-        const gridV = 24;
-        for (let i = 0; i <= gridV; i++) {
-            const x = (i / gridV) * 256;
-            bctx.beginPath();
-            bctx.moveTo(x, 0);
-            bctx.lineTo(256, x); 
-            bctx.stroke();
-        }
-
-        const ballTexture = new THREE.CanvasTexture(bCanvas);
-        ballTexture.colorSpace = THREE.SRGBColorSpace;
-
         const ballMat = new THREE.MeshStandardMaterial({
             map: ballTexture,
-            roughness: 0.05,
-            metalness: currentConfig.metalness,
-            emissive: currentConfig.glowColor,
+            color: config.ballColor,
+            emissive: config.ballColor,
             emissiveMap: ballTexture,
-            emissiveIntensity: currentConfig.emissiveIntensity
+            emissiveIntensity: config.emissiveIntensity
         });
-
         this.ballMesh = new THREE.Mesh(geom, ballMat);
-        this.ballMesh.castShadow = true;
-        this.ballMesh.position.set(0, this.physics.ballRadius, this.foulLineZ);
         this.scene.add(this.ballMesh);
-        if (this.controls) this.controls.ballMesh = this.ballMesh;
+        this.ballMesh.position.set(0, this.physics.ballRadius, this.foulLineZ);
     }
 
+    if (this.controls) this.controls.ballMesh = this.ballMesh;
+}
     throwBall(velocity, spin) {
         if (this.gameState !== 'AIMING' && this.gameState !== 'POSITIONING') return;
 
