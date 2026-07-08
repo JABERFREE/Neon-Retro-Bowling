@@ -26,9 +26,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          rm -rf node_modules
-          rm -rf package-lock.json
-          npm install
+        
 
       - name: Force Update Bundle Identifier in Xcode
         run: |
