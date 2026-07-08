@@ -1,7 +1,11 @@
 name: Build iOS IPA
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -13,18 +17,18 @@ jobs:
       - name: Force Select Xcode 26 Version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '26.0'
+          xcode-version: "26.0"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install Dependencies 
-       run: |
-        rm -rf node_modules
-        rm -rf package-lock.json
-        npm install
+      - name: Install Dependencies
+        run: |
+          rm -rf node_modules
+          rm -rf package-lock.json
+          npm install
 
       - name: Force Update Bundle Identifier in Xcode
         run: |
@@ -51,6 +55,7 @@ jobs:
           app-store-connect-api-key-id: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           app-store-connect-api-key-issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           app-store-connect-api-key-base64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+
       - name: Upload to TestFlight via Apple altool
         run: |
           xcrun altool --upload-app -f NeonRetroBowling.ipa -t ios -u "${{ secrets.APPLE_ID }}" -p "${{ secrets.APPLE_PASSWORD }}"
