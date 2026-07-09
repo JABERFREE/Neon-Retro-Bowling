@@ -1,18 +1,47 @@
 workflows:
-  ios-workflow:
-    name: iOS Workflow
-    instance_type: mac_mini_m1
+  neon-retro-bowling-ios:
+    name: Neon Retro Bowling - iOS Build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
     environment:
-      xcode: latest
+      vars:
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+        NODE_VERSION: "20"
+    triggering:
+      events:
+        - push
+      branch_restriction:
+        - main
     scripts:
-      - name: Install dependencies
+      - name: Install Node & dependencies
         script: |
-          # نستخدم npm install بدلاً من ci لتجنب مشاكل قفل الإصدارات في بيئة البناء
-          npm install
-          npx cap sync ios
-      - name: Build iOS app
+          nvm install $NODE_VERSION
+          npm ci --prefer-offline
+
+      - name: Build Web Assets
+        script: npm run build
+
+      - name: Sync Capacitor iOS
+        script: npx cap sync ios
+
+      - name: Install CocoaPods
         script: |
           cd ios/App
-          xcodebuild build -scheme App -destination 'generic/platform=iOS' -allowProvisioningUpdates
+          pod repo update --silent
+          pod install --verbose
+
+      - name: Build iOS App (Release)
+        script: |
+          cd ios/App
+          xcodebuild -workspace App.xcworkspace \
+            -scheme App \
+            -sdk iphoneos \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            archive -archivePath build/App.xcarchive
+
     artifacts:
-      - ios/App/build/Build/Products/Debug-iphoneos/*.ipa
+      - path: ios/App/build/App.xcarchive
+      - path: ios/App/build/*.ipa
