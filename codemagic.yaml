@@ -1,47 +1,19 @@
 workflows:
-  neon-retro-bowling-ios:
-    name: Neon Retro Bowling - iOS Build
-    instance_type: mac_mini_m2
-    max_build_duration: 60
+  ios-workflow:
+    name: iOS Workflow
+    instance_type: mac_mini_m1
     environment:
-      vars:
-        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
-        XCODE_SCHEME: "App"
-        NODE_VERSION: "20"
-    triggering:
-      events:
-        - push
-      branch_restriction:
-        - main
-    scripts:
-      - name: Install Node & dependencies
+      xcode: latest
+scripts:
+      - name: Install dependencies
         script: |
-          nvm install $NODE_VERSION
-          npm ci --prefer-offline
-
-      - name: Build Web Assets
-        script: npm run build
-
-      - name: Sync Capacitor iOS
-        script: npx cap sync ios
-
-      - name: Install CocoaPods
+          npm install
+          npx cap sync ios
+      - name: Build iOS app
         script: |
           cd ios/App
-          pod repo update --silent
-          pod install --verbose
-
-      - name: Build iOS App (Release)
-        script: |
-          cd ios/App
-          xcodebuild -workspace App.xcworkspace \
-            -scheme App \
-            -sdk iphoneos \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
-            CODE_SIGNING_ALLOWED=NO \
-            archive -archivePath build/App.xcarchive
-
+          # هذا الأمر سيقوم بالبناء والتصدير باستخدام ملف الـ plist الذي أنشأته
+          xcodebuild clean archive -workspace App.xcworkspace -scheme App -archivePath App.xcarchive
+          xcodebuild -exportArchive -archivePath App.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
     artifacts:
-      - path: ios/App/build/App.xcarchive
-      - path: ios/App/build/*.ipa
+      - ios/App/build/*.ipa
