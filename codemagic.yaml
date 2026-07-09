@@ -7,6 +7,8 @@ workflows:
     scripts:
       - name: Install dependencies
         script: |
+          rm -rf node_modules
+          rm -f package-lock.json
           npm install
           npx cap sync ios
       - name: Build iOS app
