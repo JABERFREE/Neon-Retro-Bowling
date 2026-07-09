@@ -4,7 +4,7 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       xcode: latest
-scripts:
+    scripts:
       - name: Install dependencies
         script: |
           npm install
@@ -12,7 +12,6 @@ scripts:
       - name: Build iOS app
         script: |
           cd ios/App
-          # هذا الأمر سيقوم بالبناء والتصدير باستخدام ملف الـ plist الذي أنشأته
           xcodebuild clean archive -workspace App.xcworkspace -scheme App -archivePath App.xcarchive
           xcodebuild -exportArchive -archivePath App.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build
     artifacts:
