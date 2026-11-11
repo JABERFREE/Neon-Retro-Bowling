@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Neon Retro Bowling - Cyberpunk 3D Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://esm.sh/three@0.184.0",
+          "three/": "https://esm.sh/three@0.184.0/",
+          "tone": "https://esm.sh/tone@14.7.77",
+          "@instantdb/core": "https://esm.sh/@instantdb/core@0.22.155"
+        }
+      }
+    </script>
+    <style>
+      html, body, #game-container { width: 100%; height: 100%; margin: 0; padding: 0; background-color: black; overflow: hidden; }
+      #game-container { position: relative; }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+      }
+      body { touch-action: none; }
+      /* هذا الكود يحمي أي عناصر تحكم سفلية تظهر في اللعبة على الآيفون والموتورولا */
+div[class*="control"], div[id*="control"], .ui-bottom, #ui-root {
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    box-sizing: border-box;
+}
+    </style>
+ 
+  <style>
+    #retro-exported-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    display: none !important; /* 👈 هذا هو التعديل السحري الحاسم */
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    opacity: 1;
+    transition: opacity 500ms ease-in-out;
+}
+
+    #retro-exported-splash.is-hiding {
+        opacity: 0;
+    }
+
+    #retro-exported-splash .retro-exported-splash__content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        text-align: center;
+        color: #fff;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    #retro-exported-splash .retro-exported-splash__logo {
+        width: 100px;
+        height: 100px;
+        animation: retro-exported-splash-breathe 2.4s ease-in-out infinite;
+    }
+
+    #retro-exported-splash .retro-exported-splash__text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 16px;
+        line-height: 1.25;
+        letter-spacing: 0.06em;
+    }
+
+    #retro-exported-splash .retro-exported-splash__text strong {
+        font-weight: 700;
+    }
+
+    #retro-exported-splash .retro-exported-splash__text span:last-child {
+        opacity: 0.88;
+    }
+
+    @keyframes retro-exported-splash-breathe {
+        0%,
+        100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+</style></head>
+  <body>
+<div id="retro-exported-splash" aria-live="polite">
+    <div class="retro-exported-splash__content">
+        <img
+            class="retro-exported-splash__logo"
+            src="__retro/retro-icon.png"
+            alt="retro Logo"
+            width="100"
+            height="100"
+        />
+        <div class="retro-exported-splash__text" aria-label="retro.AI Make Games">
+            <strong>retro.AI</strong>
+            <span>Make Games</span>
+        </div>
+    </div>
+</div>
+    <div id="game-container"></div>
+    <script type="module" src="main.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/ChatManager.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/ImageGenerator.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/ProgressLogger.js"></script>
+    <script src="https://storage.googleapis.com/retro_staticfiles/OGP.js"></script>
+  
+<script>
+    (() => {
+        const splashRoot = document.getElementById('retro-exported-splash');
+        if (!splashRoot) return;
+
+        let isReady = false;
+        let isMinimumVisibleTimeElapsed = false;
+        let isHidden = false;
+
+        const maybeHideSplash = () => {
+            if (isHidden || !isReady || !isMinimumVisibleTimeElapsed) return;
+
+            isHidden = true;
+            splashRoot.classList.add('is-hiding');
+            window.setTimeout(() => splashRoot.remove(), 500);
+        };
+
+        const markReady = () => {
+            isReady = true;
+            maybeHideSplash();
+        };
+
+        window.setTimeout(() => {
+            isMinimumVisibleTimeElapsed = true;
+            maybeHideSplash();
+        }, 1000);
+
+        if (document.readyState === 'complete') {
+            markReady();
+        } else {
+            window.addEventListener('load', markReady, { once: true });
+        }
+
+        
+    })();
+</script></body>
+</html>
